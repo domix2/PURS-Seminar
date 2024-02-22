@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,redirect,url_for,session
-import MySQLdb
+import MySQLdb,hashlib
 
 app = Flask ("Seminar")
 
@@ -10,8 +10,7 @@ cursor = connection.cursor()
 
 @app.get('/')
 def odabir():
-    username = request.args.get('user', 'Guest')
-    response = render_template('main.html', title = 'Seminar', username = username)
+    response = render_template('main.html', title = 'Seminar')
     return response
 
 @app.get('/login')
@@ -19,15 +18,31 @@ def login():
     response = render_template('login.html', title = 'Prijava')
     return response
 
+@app.get('/logout')
+def odjava():
+    response = render_template('login.html', title = 'Prijava')
+    return response
+
 @app.post('/login')
 def login_user():
-    username = request.form.get('newUsername')
-    password = request.form.get('newPassword')
-    query = "SELECT * FROM korisnik WHERE username = %s AND password = %s"
-    cursor.execute(query,(username, password))
-    connection.commit()
-    response = render_template('pocetna.html', username=username)
-    return response
+    username = request.form['username']
+    password = request.form['password']
+
+    if username and password:
+        session['username'] = username
+
+        query = "SELECT * FROM korisnik WHERE username = %s AND password = %s"
+        cursor.execute(query, (username, password))
+        user = cursor.fetchone()
+
+        if user:
+            print('uspješna prijava')
+            return render_template('pocetna.html', username=username)
+        else:
+            print('neuspješna prijava')
+            return render_template('login.html', title='Prijava', error='Invalid username or password')
+
+    return render_template('login.html', title='Prijava', error='Invalid form data')
 
 @app.get('/register')
 def register():
@@ -40,12 +55,12 @@ def register_user():
      prezime = request.form.get('newPrezime')
      username = request.form.get('newUsername')
      password = request.form.get('newPassword')
-     # korisnik je definiran i ima sve ovlasti #
+    # korisnik je definiran i ima sve ovlasti #
      query = "INSERT INTO korisnik (ime, prezime, username, password) VALUES (%s,%s,%s,%s)"
      cursor.execute(query, (ime, prezime, username, password))
      connection.commit()
      connection.close()
-     response = render_template('login.html', title = 'Pocetna stranica')
+     response = render_template('login.html')
      return response 
 
 @app.get('/home')
@@ -72,19 +87,6 @@ def rezultati():
 def pozivanje_podataka():
     response = render_template('obrada.html', title='Dohvat Podataka')
     return response
-
-
-#@app.post('/login') #za testiranje prijave i preusmjeravanje na početnu stranicu 
-#def logintest1():
-    #username = request.form.get('username')
-    #password = request.form.get('password')
-
-    #if username == 'PURS' and password == '1234':
-        #session['username'] = username
-        #return redirect(url_for('pocetna'))
-    #else:
-        #return redirect(url_for('odabir'))
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=80)
