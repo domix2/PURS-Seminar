@@ -9,6 +9,9 @@
 <body>
     <div class="Registerform">
         <h2>Registracija</h2>
+        {% if success_message %}
+            <p style="color: green;"><strong>{{ success_message }}</strong></p>
+        {% endif %}
         <form action="/register" method="post">
             <label for="newName">Ime:</label>
             <input type="text" id="newName" name="newName" required>

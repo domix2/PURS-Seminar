@@ -35,3 +35,10 @@ CREATE TABLE vlaga (
 
 CREATE INDEX idx_korisnik_username ON korisnik(username);
 DROP INDEX idx_korisnik_username ON korisnik;
+
+CREATE TABLE izmjereni_rezultati ( 
+		id INT AUTO_INCREMENT PRIMARY KEY,
+        Temperatura FLOAT,
+        Vlaga FLOAT,
+        Vrijeme TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+

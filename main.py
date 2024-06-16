@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,redirect,url_for,session
-import MySQLdb,hashlib
+import MySQLdb
 
 app = Flask ("Seminar")
 
@@ -20,6 +20,7 @@ def login():
 
 @app.get('/logout')
 def odjava():
+    session.pop('username', None)
     response = render_template('login.html', title = 'Prijava')
     return response
 
@@ -40,7 +41,7 @@ def login_user():
             return render_template('pocetna.html', username=username)
         else:
             print('neuspješna prijava')
-            return render_template('login.html', title='Prijava', error='Invalid username or password')
+            return render_template('login.html', title='Prijava', error='Netočno upisani podaci')
 
     return render_template('login.html', title='Prijava', error='Invalid form data')
 
@@ -60,13 +61,16 @@ def register_user():
      cursor.execute(query, (ime, prezime, username, password))
      connection.commit()
      connection.close()
-     response = render_template('login.html')
+     success_message = "Registracija uspješna."
+     response = render_template('login.html', title='Prijava', success_message=success_message)
      return response 
 
 @app.get('/home')
 def pocetna():
-    response = render_template('pocetna.html', title = 'Pocetna stranica')
-    return response
+    if 'username' in session:
+        return render_template('pocetna.html', title='Pocetna stranica', username=session['username'])
+    else:
+        return redirect(url_for('login'))
 
 @app.get('/izmjerena_temperatura')
 def temperatura():
@@ -87,6 +91,13 @@ def rezultati():
 def pozivanje_podataka():
     response = render_template('obrada.html', title='Dohvat Podataka')
     return response
+
+@app.post('/obrada')
+def pregled_podataka():
+    return
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=80)
