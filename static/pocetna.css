@@ -57,3 +57,7 @@ h2 , h3 {
     font-size: medium;
 }
 
+table,th{
+    text-align: center;
+}
+

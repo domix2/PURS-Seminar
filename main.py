@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for,session
+from flask import Flask,render_template,request,redirect,url_for,session,jsonify
 import MySQLdb
 
 app = Flask ("Seminar")
@@ -84,8 +84,28 @@ def vlaga():
 
 @app.get('/rezultati')
 def rezultati():
-    response = render_template('rezultati.html', title='Očitani rezultati')
-    return response
+    if connection:
+        try:
+            cursor = connection.cursor()
+            query = "SELECT * FROM izmjereni_rezultati"
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            # Convert the results to a list of dictionaries for easy handling in the template
+            result_list = []
+            for row in results:
+                result_list.append({
+                    "id": row[0],
+                    "temperatura": row[1],
+                    "vlaga": row[2],
+                    "vrijeme": row[3]
+                })
+            return render_template('rezultati.html', title='Očitani rezultati', results=result_list)
+        except MySQLdb.Error as e:
+            return render_template('rezultati.html', title='Očitani rezultati', error=f"Database error: {e}")
+    else:
+        return render_template('rezultati.html', title='Očitani rezultati', error="Failed to connect to the database")
+
 
 @app.get('/obrada')
 def pozivanje_podataka():
@@ -93,9 +113,27 @@ def pozivanje_podataka():
     return response
 
 @app.post('/obrada')
-def pregled_podataka():
-    return
+def data_api():
+    if request.is_json:
+        data = request.get_json()
+        temperatura = data.get('temperatura')
+        vlaga = data.get('vlaga')
 
+        if connection:
+            try:
+                cursor = connection.cursor()
+                query = "INSERT INTO izmjereni_rezultati (temperatura, vlaga) VALUES (%s, %s)"
+                cursor.execute(query, (temperatura, vlaga))
+                connection.commit()
+                cursor.close()
+                # Don't close the connection here, as it should remain open for further requests
+                return jsonify({"message": "Data inserted successfully"}), 201
+            except MySQLdb.Error as e:
+                return jsonify({"message": f"Database error: {e}"}), 500
+        else:
+            return jsonify({"message": "Failed to connect to the database"}), 500
+    else:
+        return jsonify({"message": "Request body must be JSON"}), 400
 
 
 

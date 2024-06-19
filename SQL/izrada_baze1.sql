@@ -41,4 +41,5 @@ CREATE TABLE izmjereni_rezultati (
         Temperatura FLOAT,
         Vlaga FLOAT,
         Vrijeme TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
-
+        
+DROP TABLE izmjereni_rezultati;
