@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Status Page</title>
+    <style>
+        .status-open {
+            color: green;
+        }
+        .status-closed {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Status: 
+        <span class="{{ 'status-open' if status == 'Open' else 'status-closed' }}">
+            {{ status }}
+        </span>
+    </h1>
+</body>
+</html>

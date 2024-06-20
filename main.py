@@ -8,6 +8,8 @@ app.secret_key = '_5#y2L"F4Q8z-n-xec]/'
 connection = MySQLdb.connect(host="localhost", user="domi", passwd ="1234", db="seminar")
 cursor = connection.cursor()
 
+status = "Unknown"
+
 @app.get('/')
 def odabir():
     response = render_template('main.html', title = 'Seminar')
@@ -135,6 +137,25 @@ def data_api():
     else:
         return jsonify({"message": "Request body must be JSON"}), 400
 
+
+@app.route('/test', methods=['GET'])
+def test_gumba():
+    global status
+    return render_template('test.html', status=status)
+
+@app.route('/test', methods=['POST'])
+def update_status():
+    global status
+    if request.is_json:
+        data = request.get_json()
+        new_status = data.get('status')
+        if new_status in ["Open", "Closed"]:
+            status = new_status
+            return jsonify({"message": "Status updated successfully"}), 200
+        else:
+            return jsonify({"message": "Invalid status"}), 400
+    else:
+        return jsonify({"message": "Request body must be JSON"}), 400
 
 
 if __name__ == '__main__':
