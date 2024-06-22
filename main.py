@@ -141,7 +141,7 @@ def data_api():
 @app.get('/regulacija')
 def test_gumba():
     global status
-    return render_template('regulacija.html', status=status)
+    return render_template('regulacija.html', status=status,username=session['username'])
 
 @app.post('/regulacija')
 def update_status():
