@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Page</title>
+    <link rel="stylesheet" href="../static/pocetna.css">
+</head>
+<body>
+    <div class="main-container">
+        <nav>
+            <div class="lijeva-strana">
+                <a href="/home">Home</a>
+                <a href="/izmjerena_temperatura">Temperatura</a>
+                <a href="/izmjerena_vlaga">Vlaga</a>
+            </div>
+            <div class="desna-strana">
+                <span>{{username}}</span>
+                <a href="/">Odjava</a>
+            </div>
+        </nav>
+        <h1>Status ventila: 
+            <span class="{{ 'status-open' if status == 'Open' else 'status-closed' }}">
+                {{ status }}
+            </span>
+        </h1>
+</body>
+</html>

@@ -57,7 +57,40 @@ h2 , h3 {
     font-size: medium;
 }
 
-table,th{
+table {
+    margin: 20px auto; /* Center the table horizontally */
+    width: 50%; /* Adjust width as needed */
+    background-color: white;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 8px;
     text-align: center;
 }
 
+th {
+    background-color: #f2f2f2;
+}
+
+.status-open {
+    color: green;
+}
+.status-closed {
+    color: red;
+}
+
+.status-text {
+    font-size: 0.8em; /* Adjust font size as needed */
+    text-align: center; /* Center text */
+    display: block; /* Ensures text block */
+}
+
+.status-open, .status-closed {
+    width: 50;
+    font-size: 0.8em;
+    text-align: center; /* Adjust font size as needed */
+}

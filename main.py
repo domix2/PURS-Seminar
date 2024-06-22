@@ -76,12 +76,12 @@ def pocetna():
 
 @app.get('/izmjerena_temperatura')
 def temperatura():
-    response = render_template('temperatura.html', title = 'izmjerena_temperatura')
+    response = render_template('mjerenje.html', title = 'izmjerena_temperatura')
     return response
 
 @app.get('/izmjerena_vlaga')
 def vlaga():
-    response = render_template('vlaga.html', title = 'izmjerena_vlaga')
+    response = render_template('mjerenje.html', title = 'izmjerena_vlaga')
     return response
 
 @app.get('/rezultati')
@@ -102,7 +102,7 @@ def rezultati():
                     "vlaga": row[2],
                     "vrijeme": row[3]
                 })
-            return render_template('rezultati.html', title='Očitani rezultati', results=result_list)
+            return render_template('rezultati.html', title='Očitani rezultati', results=result_list, username=session['username'])
         except MySQLdb.Error as e:
             return render_template('rezultati.html', title='Očitani rezultati', error=f"Database error: {e}")
     else:
@@ -138,12 +138,12 @@ def data_api():
         return jsonify({"message": "Request body must be JSON"}), 400
 
 
-@app.route('/test', methods=['GET'])
+@app.get('/regulacija')
 def test_gumba():
     global status
-    return render_template('test.html', status=status)
+    return render_template('regulacija.html', status=status)
 
-@app.route('/test', methods=['POST'])
+@app.post('/regulacija')
 def update_status():
     global status
     if request.is_json:
@@ -156,7 +156,6 @@ def update_status():
             return jsonify({"message": "Invalid status"}), 400
     else:
         return jsonify({"message": "Request body must be JSON"}), 400
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=80)

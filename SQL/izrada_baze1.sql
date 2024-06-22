@@ -15,27 +15,6 @@ CREATE USER domi@'%' IDENTIFIED BY '1234';
 
 DROP TABLE korisnik;
     
-CREATE TABLE temperatura (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255),
-    datetime DATETIME,
-    value FLOAT,
-    FOREIGN KEY (username) REFERENCES korisnik(username),
-    INDEX fk_temperatura_korisnik_idx (username)
-);
-
-CREATE TABLE vlaga (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255),
-    datetime DATETIME,
-    value FLOAT,
-    FOREIGN KEY (username) REFERENCES korisnik(username),
-    INDEX fk_vlaga_korisnik_idx (username)
-);
-
-CREATE INDEX idx_korisnik_username ON korisnik(username);
-DROP INDEX idx_korisnik_username ON korisnik;
-
 CREATE TABLE izmjereni_rezultati ( 
 		id INT AUTO_INCREMENT PRIMARY KEY,
         Temperatura FLOAT,
