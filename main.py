@@ -76,38 +76,36 @@ def pocetna():
 
 @app.get('/izmjerena_temperatura')
 def temperatura():
-    response = render_template('mjerenje.html', title = 'izmjerena_temperatura')
-    return response
-
-@app.get('/izmjerena_vlaga')
-def vlaga():
-    response = render_template('mjerenje.html', title = 'izmjerena_vlaga')
-    return response
-
-@app.get('/rezultati')
-def rezultati():
     if connection:
         try:
             cursor = connection.cursor()
-            query = "SELECT * FROM izmjereni_rezultati"
+            query = "SELECT id, temperatura, vrijeme FROM izmjereni_rezultati"
             cursor.execute(query)
             results = cursor.fetchall()
             cursor.close()
-            # Convert the results to a list of dictionaries for easy handling in the template
-            result_list = []
-            for row in results:
-                result_list.append({
-                    "id": row[0],
-                    "temperatura": row[1],
-                    "vlaga": row[2],
-                    "vrijeme": row[3]
-                })
-            return render_template('rezultati.html', title='Očitani rezultati', results=result_list, username=session['username'])
+            result_list = [{"id": row[0], "temperatura": row[1], "vrijeme": row[2]} for row in results]
+            return render_template('mjerenje.html', title='Izmjerena Temperatura', results=result_list, display='temperatura', username=session.get('username'))
         except MySQLdb.Error as e:
-            return render_template('rezultati.html', title='Očitani rezultati', error=f"Database error: {e}")
+            return render_template('mjerenje.html', title='Izmjerena Temperatura', error=f"Database error: {e}", display='temperatura')
     else:
-        return render_template('rezultati.html', title='Očitani rezultati', error="Failed to connect to the database")
+        return render_template('mjerenje.html', title='Izmjerena Temperatura', error="Failed to connect to the database", display='temperatura')
 
+
+@app.get('/izmjerena_vlaga')
+def vlaga():
+    if connection:
+        try:
+            cursor = connection.cursor()
+            query = "SELECT id, vlaga, vrijeme FROM izmjereni_rezultati"
+            cursor.execute(query)
+            results = cursor.fetchall()
+            cursor.close()
+            result_list = [{"id": row[0], "vlaga": row[1], "vrijeme": row[2]} for row in results]
+            return render_template('mjerenje.html', title='Izmjerena Vlaga', results=result_list, display='vlaga', username=session.get('username'))
+        except MySQLdb.Error as e:
+            return render_template('mjerenje.html', title='Izmjerena Vlaga', error=f"Database error: {e}", display='vlaga')
+    else:
+        return render_template('mjerenje.html', title='Izmjerena Vlaga', error="Failed to connect to the database", display='vlaga')
 
 @app.get('/obrada')
 def pozivanje_podataka():
